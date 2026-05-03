@@ -25,6 +25,7 @@ export function Charts() {
   const [selected, setSelected] = useState<string | null>(null);
   const [range, setRange] = useState<RangeId>('30');
   const [openEntry, setOpenEntry] = useState<JournalEntry | null>(null);
+  const [connectByDate, setConnectByDate] = useState(false);
 
   // Default to first type with entries
   const allEntries = useEntries();
@@ -118,30 +119,96 @@ export function Charts() {
         ))}
       </div>
 
-      <div className="card p-4 md:p-6">
-        {trackingType && axisX && axisY && (
-          <ScatterChart2D
-            axisX={axisX}
-            axisY={axisY}
-            color={trackingType.color}
-            entries={filteredEntries}
-            onPointClick={(e) => setOpenEntry(e)}
-          />
-        )}
-        {trackingType && axisX && !axisY && (
+      {trackingType && axisX && axisY && (
+        <>
+          <div className="card p-4 md:p-6">
+            <div className="mb-3 flex items-center justify-end">
+              <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-ink-600">
+                <span>Connect by date</span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={connectByDate}
+                  onClick={() => setConnectByDate((v) => !v)}
+                  className={[
+                    'relative h-5 w-9 rounded-full transition',
+                    connectByDate ? 'bg-ink-900' : 'bg-ink-300',
+                  ].join(' ')}
+                >
+                  <span
+                    className={[
+                      'absolute top-0.5 h-4 w-4 rounded-full bg-white transition',
+                      connectByDate ? 'left-[18px]' : 'left-0.5',
+                    ].join(' ')}
+                  />
+                </button>
+              </label>
+            </div>
+            <ScatterChart2D
+              axisX={axisX}
+              axisY={axisY}
+              color={trackingType.color}
+              entries={filteredEntries}
+              connectByDate={connectByDate}
+              onPointClick={(e) => setOpenEntry(e)}
+            />
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-4">
+            <div className="card p-4 md:p-5">
+              <div className="mb-2 flex items-center justify-between">
+                <h3 className="text-sm font-medium text-ink-700">
+                  {axisX.name} <span className="text-ink-400">over time</span>
+                </h3>
+                <span className="text-[10px] uppercase tracking-wider text-ink-400">X axis</span>
+              </div>
+              <LineChart1D
+                axis={axisX}
+                color={trackingType.color}
+                entries={filteredEntries}
+                field="x"
+                heightClass="h-40"
+                showMovingAverage={false}
+                onPointClick={(e) => setOpenEntry(e)}
+              />
+            </div>
+            <div className="card p-4 md:p-5">
+              <div className="mb-2 flex items-center justify-between">
+                <h3 className="text-sm font-medium text-ink-700">
+                  {axisY.name} <span className="text-ink-400">over time</span>
+                </h3>
+                <span className="text-[10px] uppercase tracking-wider text-ink-400">Y axis</span>
+              </div>
+              <LineChart1D
+                axis={axisY}
+                color={trackingType.color}
+                entries={filteredEntries}
+                field="y"
+                heightClass="h-40"
+                showMovingAverage={false}
+                onPointClick={(e) => setOpenEntry(e)}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {trackingType && axisX && !axisY && (
+        <div className="card p-4 md:p-6">
           <LineChart1D
             axis={axisX}
             color={trackingType.color}
             entries={filteredEntries}
             onPointClick={(e) => setOpenEntry(e)}
           />
-        )}
-        {!trackingType && (
-          <div className="rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400">
-            Select a tracking type.
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {!trackingType && (
+        <div className="card rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400">
+          Select a tracking type.
+        </div>
+      )}
 
       <p className="mt-3 text-xs text-ink-400">
         {filteredEntries.length} entr{filteredEntries.length === 1 ? 'y' : 'ies'} in range.

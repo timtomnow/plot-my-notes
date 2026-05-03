@@ -16,6 +16,7 @@ type Props = {
   axisY: Axis;
   color: string;
   entries: JournalEntry[];
+  connectByDate?: boolean;
   onPointClick?: (e: JournalEntry) => void;
 };
 
@@ -27,7 +28,7 @@ type Point = {
   entry: JournalEntry;
 };
 
-export function ScatterChart2D({ axisX, axisY, color, entries, onPointClick }: Props) {
+export function ScatterChart2D({ axisX, axisY, color, entries, connectByDate, onPointClick }: Props) {
   const filtered = entries.filter((e) => e.y !== null && e.y !== undefined);
   if (filtered.length === 0) {
     return <div className="rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400">No data in range.</div>;
@@ -37,13 +38,18 @@ export function ScatterChart2D({ axisX, axisY, color, entries, onPointClick }: P
   const maxTs = Math.max(...ts);
   const span = Math.max(1, maxTs - minTs);
 
-  const data: Point[] = filtered.map((e) => ({
-    x: e.x,
-    y: e.y as number,
-    ts: e.date,
-    recency: (e.date - minTs) / span,
-    entry: e,
-  }));
+  // Recharts draws Scatter `line` in array order — sort by date so the line
+  // traces the user's journey through time, not arbitrary insertion order.
+  const data: Point[] = filtered
+    .slice()
+    .sort((a, b) => a.date - b.date)
+    .map((e) => ({
+      x: e.x,
+      y: e.y as number,
+      ts: e.date,
+      recency: (e.date - minTs) / span,
+      entry: e,
+    }));
 
   return (
     <div className="h-80 w-full">
@@ -91,6 +97,8 @@ export function ScatterChart2D({ axisX, axisY, color, entries, onPointClick }: P
             data={data}
             fill={color}
             isAnimationActive={false}
+            line={connectByDate ? { stroke: color, strokeOpacity: 0.4, strokeWidth: 1.5 } : false}
+            lineType="joint"
             onClick={(payload) => {
               const p = payload as unknown as Point;
               if (p?.entry && onPointClick) onPointClick(p.entry);

@@ -14,6 +14,11 @@ type Props = {
   axis: Axis;
   color: string;
   entries: JournalEntry[];
+  /** Which field of the entry to plot on the y-axis. Defaults to 'x'. */
+  field?: 'x' | 'y';
+  /** Tailwind height class, e.g. 'h-72' (default) or 'h-40' for compact charts. */
+  heightClass?: string;
+  showMovingAverage?: boolean;
   onPointClick?: (e: JournalEntry) => void;
 };
 
@@ -24,12 +29,29 @@ type Point = {
   entry: JournalEntry;
 };
 
-export function LineChart1D({ axis, color, entries, onPointClick }: Props) {
-  const sorted = [...entries].sort((a, b) => a.date - b.date);
+export function LineChart1D({
+  axis,
+  color,
+  entries,
+  field = 'x',
+  heightClass = 'h-72',
+  showMovingAverage = true,
+  onPointClick,
+}: Props) {
+  const sorted = [...entries]
+    .filter((e) => {
+      const v = field === 'x' ? e.x : e.y;
+      return v !== null && v !== undefined;
+    })
+    .sort((a, b) => a.date - b.date);
+
   const data: Point[] = sorted.map((e, i) => {
+    const value = (field === 'x' ? e.x : (e.y as number));
     const window = sorted.slice(Math.max(0, i - 6), i + 1);
-    const ma = window.reduce((acc, p) => acc + p.x, 0) / window.length;
-    return { ts: e.date, value: e.x, ma: window.length >= 3 ? ma : null, entry: e };
+    const ma =
+      window.reduce((acc, p) => acc + (field === 'x' ? p.x : (p.y as number)), 0) /
+      window.length;
+    return { ts: e.date, value, ma: window.length >= 3 ? ma : null, entry: e };
   });
 
   if (data.length === 0) {
@@ -37,7 +59,7 @@ export function LineChart1D({ axis, color, entries, onPointClick }: Props) {
   }
 
   return (
-    <div className="h-72 w-full">
+    <div className={`${heightClass} w-full`}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: -16 }}>
           <CartesianGrid stroke="#e4e4e7" strokeDasharray="3 3" vertical={false} />
@@ -85,16 +107,18 @@ export function LineChart1D({ axis, color, entries, onPointClick }: Props) {
             }}
             isAnimationActive={false}
           />
-          <Line
-            type="monotone"
-            dataKey="ma"
-            stroke={color}
-            strokeOpacity={0.35}
-            strokeWidth={2}
-            strokeDasharray="4 4"
-            dot={false}
-            isAnimationActive={false}
-          />
+          {showMovingAverage && (
+            <Line
+              type="monotone"
+              dataKey="ma"
+              stroke={color}
+              strokeOpacity={0.35}
+              strokeWidth={2}
+              strokeDasharray="4 4"
+              dot={false}
+              isAnimationActive={false}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

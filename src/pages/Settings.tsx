@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Sliders, Layers, ChevronRight } from 'lucide-react';
+import { Sliders, Layers, ChevronRight, Github } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useAxes, useTrackingTypes } from '@/db/repo';
+
+const REPO_URL = 'https://github.com/timtomnow/plot-my-notes';
 
 export function Settings() {
   const axes = useAxes();
@@ -26,9 +28,31 @@ export function Settings() {
           description="What you log — combine one or two axes (1D or 2D)."
         />
       </ul>
-      <p className="mt-8 text-center text-xs text-ink-400">
-        Plot My Notes · v0.1 · local-first
-      </p>
+
+      <section className="mt-10">
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-400">
+          About
+        </h2>
+        <div className="card p-5">
+          <div className="text-base font-semibold">Plot My Notes</div>
+          <p className="mt-1 text-sm text-ink-500">
+            A calm, local-first journaling and emotional-tracking app. Define
+            your axes, log your day, see the patterns.
+          </p>
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-ink-700 hover:text-ink-900"
+          >
+            <Github size={16} />
+            github.com/timtomnow/plot-my-notes
+          </a>
+          <div className="mt-4 border-t border-ink-100 pt-3 text-xs text-ink-400">
+            © {new Date().getFullYear()} timtomnow · v0.1 · local-first
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
