@@ -1,13 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, ListTodo, LineChart, Settings as SettingsIcon, Plus } from 'lucide-react';
-
-const items = [
-  { to: '/', label: 'Home', icon: Home, end: true },
-  { to: '/entries', label: 'Entries', icon: ListTodo },
-  // Center FAB-like New button is rendered separately
-  { to: '/charts', label: 'Charts', icon: LineChart },
-  { to: '/settings', label: 'Settings', icon: SettingsIcon },
-];
+import { Home, ListTodo, LineChart, Settings as SettingsIcon, Plus, type LucideIcon } from 'lucide-react';
 
 export function BottomNav() {
   const navigate = useNavigate();
@@ -41,7 +33,7 @@ export function BottomNav() {
 type NavItemProps = {
   to: string;
   label: string;
-  Icon: (typeof items)[number]['icon'];
+  Icon: LucideIcon;
   end?: boolean;
 };
 
