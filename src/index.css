@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+  /* Use the device safe area for the bottom nav on iOS */
+  :root {
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+  }
+  /* Make Recharts SVG inherit a sensible color */
+  .recharts-cartesian-axis-tick text,
+  .recharts-text {
+    fill: currentColor;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100;
+  }
+  .btn-primary {
+    @apply btn bg-ink-900 text-ink-50 hover:bg-ink-800;
+  }
+  .btn-secondary {
+    @apply btn bg-ink-100 text-ink-900 hover:bg-ink-200;
+  }
+  .btn-ghost {
+    @apply btn text-ink-700 hover:bg-ink-100;
+  }
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700;
+  }
+  .input {
+    @apply w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-ink-900 focus:ring-2 focus:ring-ink-900/10;
+  }
+  .label {
+    @apply block text-xs font-medium uppercase tracking-wide text-ink-500;
+  }
+  .card {
+    @apply rounded-2xl border border-ink-200 bg-white;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1 text-xs font-medium text-ink-700 transition;
+  }
+  .chip-active {
+    @apply border-ink-900 bg-ink-900 text-ink-50;
+  }
+}
