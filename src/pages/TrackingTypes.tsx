@@ -38,7 +38,7 @@ export function TrackingTypes() {
   if (axes && axes.length === 0) {
     return (
       <div>
-        <Link to="/settings" className="mb-3 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900">
+        <Link to="/settings" className="mb-3 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900 dark:text-ink-400 dark:hover:text-ink-50">
           <ChevronLeft size={16} /> Settings
         </Link>
         <PageHeader title="Tracking Types" />
@@ -58,7 +58,7 @@ export function TrackingTypes() {
 
   return (
     <div>
-      <Link to="/settings" className="mb-3 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900">
+      <Link to="/settings" className="mb-3 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900 dark:text-ink-400 dark:hover:text-ink-50">
         <ChevronLeft size={16} /> Settings
       </Link>
       <PageHeader
@@ -88,7 +88,7 @@ export function TrackingTypes() {
           {types.map((t) => {
             const usage = usageById.get(t.id) ?? 0;
             return (
-              <li key={t.id} className="flex items-center justify-between rounded-2xl border border-ink-200 bg-white p-4">
+              <li key={t.id} className="flex items-center justify-between rounded-2xl border border-ink-200 bg-white p-4 dark:border-ink-800 dark:bg-ink-900">
                 <div className="flex min-w-0 items-center gap-3">
                   <span
                     className="h-3.5 w-3.5 shrink-0 rounded-full"
@@ -96,7 +96,7 @@ export function TrackingTypes() {
                   />
                   <div className="min-w-0">
                     <div className="font-medium">{t.name}</div>
-                    <div className="mt-0.5 text-xs text-ink-500">
+                    <div className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">
                       {t.axisYId ? '2D' : '1D'} · X: {axisName(t.axisXId)}
                       {t.axisYId && <> · Y: {axisName(t.axisYId)}</>} · {usage} entr{usage === 1 ? 'y' : 'ies'}
                     </div>
@@ -249,10 +249,10 @@ function TrackingTypeForm({ open, type, existingColors, onClose, onSubmit }: For
           </div>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-ink-200 bg-ink-50 p-3">
+        <div className="flex items-center justify-between rounded-xl border border-ink-200 bg-ink-50 p-3 dark:border-ink-800 dark:bg-ink-800/40">
           <div>
             <div className="text-sm font-medium">2D tracking</div>
-            <div className="text-xs text-ink-500">Use a second axis (e.g. Energy along with Happiness).</div>
+            <div className="text-xs text-ink-500 dark:text-ink-400">Use a second axis (e.g. Energy along with Happiness).</div>
           </div>
           <button
             type="button"
@@ -261,12 +261,12 @@ function TrackingTypeForm({ open, type, existingColors, onClose, onSubmit }: For
             onClick={() => setIs2D((v) => !v)}
             className={[
               'relative h-6 w-11 rounded-full transition',
-              is2D ? 'bg-ink-900' : 'bg-ink-300',
+              is2D ? 'bg-ink-900 dark:bg-ink-50' : 'bg-ink-300 dark:bg-ink-700',
             ].join(' ')}
           >
             <span
               className={[
-                'absolute top-0.5 h-5 w-5 rounded-full bg-white transition',
+                'absolute top-0.5 h-5 w-5 rounded-full bg-white transition dark:bg-ink-900',
                 is2D ? 'left-[22px]' : 'left-0.5',
               ].join(' ')}
             />

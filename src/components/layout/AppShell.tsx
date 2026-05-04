@@ -23,7 +23,7 @@ export function AppShell() {
   }, [navigate]);
 
   return (
-    <div className="flex min-h-full bg-ink-50 text-ink-900">
+    <div className="flex min-h-full bg-ink-50 text-ink-900 dark:bg-ink-950 dark:text-ink-50">
       <Sidebar />
       <main
         className="min-h-full flex-1 pb-[calc(72px+var(--safe-bottom))] md:pb-0"

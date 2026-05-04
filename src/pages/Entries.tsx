@@ -93,7 +93,7 @@ export function Entries() {
       <div className="space-y-6">
         {grouped.map(([day, items]) => (
           <section key={day}>
-            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-400">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-400 dark:text-ink-500">
               {formatDay(day)}
             </h2>
             <ul className="space-y-2">
@@ -166,7 +166,7 @@ function EntryDetail({ entry, onClose, onEdit, onDelete }: DetailProps) {
       }
     >
       <div className="space-y-3">
-        <div className="flex items-center gap-2 text-sm text-ink-500">
+        <div className="flex items-center gap-2 text-sm text-ink-500 dark:text-ink-400">
           {t && (
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: t.color }} />
@@ -176,16 +176,16 @@ function EntryDetail({ entry, onClose, onEdit, onDelete }: DetailProps) {
           <span>·</span>
           <span>{formatDay(entry.date)}</span>
         </div>
-        <div className="grid grid-cols-2 gap-3 rounded-xl bg-ink-50 p-3 tabular-nums">
+        <div className="grid grid-cols-2 gap-3 rounded-xl bg-ink-50 p-3 tabular-nums dark:bg-ink-800/40">
           {ax && (
             <div>
-              <div className="text-xs text-ink-500">{ax.name}</div>
+              <div className="text-xs text-ink-500 dark:text-ink-400">{ax.name}</div>
               <div className="text-xl font-semibold">{formatScore(entry.x, ax)}</div>
             </div>
           )}
           {ay && entry.y !== null && (
             <div>
-              <div className="text-xs text-ink-500">{ay.name}</div>
+              <div className="text-xs text-ink-500 dark:text-ink-400">{ay.name}</div>
               <div className="text-xl font-semibold">{formatScore(entry.y, ay)}</div>
             </div>
           )}
@@ -193,7 +193,7 @@ function EntryDetail({ entry, onClose, onEdit, onDelete }: DetailProps) {
         {entry.notes && (
           <div>
             <div className="label">Notes</div>
-            <p className="mt-1 whitespace-pre-wrap text-sm text-ink-700">{entry.notes}</p>
+            <p className="mt-1 whitespace-pre-wrap text-sm text-ink-700 dark:text-ink-200">{entry.notes}</p>
           </div>
         )}
       </div>

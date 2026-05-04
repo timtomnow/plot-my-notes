@@ -29,7 +29,7 @@ export function Axes() {
     <div>
       <Link
         to="/settings"
-        className="mb-3 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900"
+        className="mb-3 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-900 dark:text-ink-400 dark:hover:text-ink-50"
       >
         <ChevronLeft size={16} /> Settings
       </Link>
@@ -66,11 +66,11 @@ export function Axes() {
             return (
               <li
                 key={axis.id}
-                className="flex items-center justify-between rounded-2xl border border-ink-200 bg-white p-4"
+                className="flex items-center justify-between rounded-2xl border border-ink-200 bg-white p-4 dark:border-ink-800 dark:bg-ink-900"
               >
                 <div className="min-w-0">
                   <div className="font-medium">{axis.name}</div>
-                  <div className="mt-0.5 text-xs text-ink-500">
+                  <div className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">
                     {axis.min} → {axis.max} · step {axis.step} · used by {usage}{' '}
                     type{usage === 1 ? '' : 's'}
                   </div>
@@ -237,7 +237,7 @@ function AxisForm({ open, axis, onClose, onSubmit }: FormProps) {
           </div>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
-        <p className="text-xs text-ink-500">
+        <p className="text-xs text-ink-500 dark:text-ink-400">
           Step must divide the range evenly. Examples: 1–10 step 0.5, -1 to 1 step 1, 0–100 step 5.
         </p>
       </div>

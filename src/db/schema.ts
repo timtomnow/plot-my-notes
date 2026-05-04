@@ -1,6 +1,9 @@
 import Dexie, { type Table } from 'dexie';
 import type { Axis, JournalEntry, TrackingType } from '@/types';
 
+/** Bumped whenever the on-disk shape changes. Written into JSON exports. */
+export const SCHEMA_VERSION = 1;
+
 export class PlotMyNotesDB extends Dexie {
   axes!: Table<Axis, string>;
   trackingTypes!: Table<TrackingType, string>;

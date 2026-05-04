@@ -16,7 +16,7 @@ export function EntryRow({ entry, trackingType, axisX, axisY, onClick, showDate 
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-start gap-3 rounded-2xl border border-ink-200 bg-white p-4 text-left transition hover:border-ink-300"
+      className="flex w-full items-start gap-3 rounded-2xl border border-ink-200 bg-white p-4 text-left transition hover:border-ink-300 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-ink-700"
     >
       <span
         className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
@@ -29,24 +29,24 @@ export function EntryRow({ entry, trackingType, axisX, axisY, onClick, showDate 
             {entry.title || trackingType?.name || 'Untitled'}
           </div>
           {showDate && (
-            <div className="shrink-0 text-xs text-ink-400">{formatDay(entry.date)}</div>
+            <div className="shrink-0 text-xs text-ink-400 dark:text-ink-500">{formatDay(entry.date)}</div>
           )}
         </div>
-        <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 text-xs text-ink-500">
+        <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 text-xs text-ink-500 dark:text-ink-400">
           <span>{trackingType?.name ?? 'Unknown type'}</span>
           {axisX && (
             <span className="tabular-nums">
-              {axisX.name} <span className="font-semibold text-ink-700">{formatScore(entry.x, axisX)}</span>
+              {axisX.name} <span className="font-semibold text-ink-700 dark:text-ink-200">{formatScore(entry.x, axisX)}</span>
             </span>
           )}
           {axisY && entry.y !== null && (
             <span className="tabular-nums">
-              {axisY.name} <span className="font-semibold text-ink-700">{formatScore(entry.y, axisY)}</span>
+              {axisY.name} <span className="font-semibold text-ink-700 dark:text-ink-200">{formatScore(entry.y, axisY)}</span>
             </span>
           )}
         </div>
         {entry.notes && (
-          <div className="mt-1 line-clamp-2 text-xs text-ink-500">{entry.notes}</div>
+          <div className="mt-1 line-clamp-2 text-xs text-ink-500 dark:text-ink-400">{entry.notes}</div>
         )}
       </div>
     </button>

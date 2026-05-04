@@ -16,6 +16,15 @@
   :root {
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-top: env(safe-area-inset-top, 0px);
+    /* Recharts theme tokens — read directly via stroke/fill="var(--…)" */
+    --chart-grid: #e4e4e7;   /* ink-200 */
+    --chart-axis: #a1a1aa;   /* ink-400 */
+    --chart-text: #71717a;   /* ink-500 */
+  }
+  .dark {
+    --chart-grid: #27272a;   /* ink-800 */
+    --chart-axis: #52525b;   /* ink-600 */
+    --chart-text: #a1a1aa;   /* ink-400 */
   }
   /* Make Recharts SVG inherit a sensible color */
   .recharts-cartesian-axis-tick text,
@@ -29,30 +38,30 @@
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100;
   }
   .btn-primary {
-    @apply btn bg-ink-900 text-ink-50 hover:bg-ink-800;
+    @apply btn bg-ink-900 text-ink-50 hover:bg-ink-800 dark:bg-ink-50 dark:text-ink-900 dark:hover:bg-ink-200;
   }
   .btn-secondary {
-    @apply btn bg-ink-100 text-ink-900 hover:bg-ink-200;
+    @apply btn bg-ink-100 text-ink-900 hover:bg-ink-200 dark:bg-ink-800 dark:text-ink-50 dark:hover:bg-ink-700;
   }
   .btn-ghost {
-    @apply btn text-ink-700 hover:bg-ink-100;
+    @apply btn text-ink-700 hover:bg-ink-100 dark:text-ink-300 dark:hover:bg-ink-800;
   }
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700;
   }
   .input {
-    @apply w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-ink-900 focus:ring-2 focus:ring-ink-900/10;
+    @apply w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-ink-900 focus:ring-2 focus:ring-ink-900/10 dark:border-ink-800 dark:bg-ink-900 dark:text-ink-50 dark:placeholder-ink-500 dark:focus:border-ink-50 dark:focus:ring-ink-50/10;
   }
   .label {
-    @apply block text-xs font-medium uppercase tracking-wide text-ink-500;
+    @apply block text-xs font-medium uppercase tracking-wide text-ink-500 dark:text-ink-400;
   }
   .card {
-    @apply rounded-2xl border border-ink-200 bg-white;
+    @apply rounded-2xl border border-ink-200 bg-white dark:border-ink-800 dark:bg-ink-900;
   }
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1 text-xs font-medium text-ink-700 transition;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1 text-xs font-medium text-ink-700 transition dark:border-ink-800 dark:bg-ink-900 dark:text-ink-300;
   }
   .chip-active {
-    @apply border-ink-900 bg-ink-900 text-ink-50;
+    @apply border-ink-900 bg-ink-900 text-ink-50 dark:border-ink-50 dark:bg-ink-50 dark:text-ink-900;
   }
 }

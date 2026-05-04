@@ -30,7 +30,7 @@ export function Slider1D({ axis, value, onChange }: Props) {
         onChange={(e) => onChange(snapToStep(Number(e.target.value), axis))}
         className="h-12 w-full cursor-pointer accent-ink-900"
       />
-      <div className="flex justify-between text-xs text-ink-400">
+      <div className="flex justify-between text-xs text-ink-400 dark:text-ink-500">
         <span>{axis.min}</span>
         <span>{axis.max}</span>
       </div>

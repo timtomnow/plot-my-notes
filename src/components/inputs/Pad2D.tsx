@@ -68,13 +68,13 @@ export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', onChange }: Props
       <div className="flex items-baseline justify-between">
         <div>
           <div className="label">{axisX.name} × {axisY.name}</div>
-          <div className="mt-1 text-xs text-ink-400">Drag the dot or tap anywhere.</div>
+          <div className="mt-1 text-xs text-ink-400 dark:text-ink-500">Drag the dot or tap anywhere.</div>
         </div>
         <div className="text-right tabular-nums">
           <div className="text-2xl font-semibold leading-tight">
             {formatScore(x, axisX)}, {formatScore(y, axisY)}
           </div>
-          <div className="text-xs text-ink-400">
+          <div className="text-xs text-ink-400 dark:text-ink-500">
             {axisX.name}, {axisY.name}
           </div>
         </div>
@@ -86,7 +86,7 @@ export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', onChange }: Props
       >
         {/* Y axis label (left) */}
         <div
-          className="pointer-events-none absolute -left-1 top-0 flex h-full flex-col justify-between text-[10px] text-ink-400"
+          className="pointer-events-none absolute -left-1 top-0 flex h-full flex-col justify-between text-[10px] text-ink-400 dark:text-ink-500"
           style={{ width: PAD_PADDING - 8 }}
         >
           <span>{axisY.max}</span>
@@ -99,7 +99,7 @@ export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', onChange }: Props
           ref={surfaceRef}
           role="application"
           aria-label={`${axisX.name} and ${axisY.name} pad`}
-          className="relative aspect-square w-full cursor-crosshair touch-none rounded-2xl border border-ink-200 bg-white shadow-inner"
+          className="relative aspect-square w-full cursor-crosshair touch-none rounded-2xl border border-ink-200 bg-white shadow-inner dark:border-ink-800 dark:bg-ink-950"
           style={{ marginLeft: PAD_PADDING - 8 }}
           onPointerDown={(e) => {
             (e.target as Element).setPointerCapture?.(e.pointerId);
@@ -109,7 +109,7 @@ export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', onChange }: Props
           }}
         >
           {/* Grid */}
-          <svg className="absolute inset-0 h-full w-full text-ink-200" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <svg className="absolute inset-0 h-full w-full text-ink-200 dark:text-ink-800" preserveAspectRatio="none" viewBox="0 0 100 100">
             {Array.from({ length: xSteps + 1 }, (_, i) => {
               const xp = (i / xSteps) * 100;
               return <line key={`vx-${i}`} x1={xp} y1={0} x2={xp} y2={100} stroke="currentColor" strokeWidth={i === 0 || i === xSteps ? 0.4 : 0.2} />;
@@ -143,18 +143,18 @@ export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', onChange }: Props
           />
           {/* Crosshair lines from thumb */}
           <div
-            className="pointer-events-none absolute h-px bg-ink-300/70"
+            className="pointer-events-none absolute h-px bg-ink-300/70 dark:bg-ink-700/70"
             style={{ left: 0, right: 0, top: `${(1 - fy) * 100}%` }}
           />
           <div
-            className="pointer-events-none absolute w-px bg-ink-300/70"
+            className="pointer-events-none absolute w-px bg-ink-300/70 dark:bg-ink-700/70"
             style={{ top: 0, bottom: 0, left: `${fx * 100}%` }}
           />
         </div>
 
         {/* X axis label (bottom) */}
         <div
-          className="mt-1 flex items-center justify-between text-[10px] text-ink-400"
+          className="mt-1 flex items-center justify-between text-[10px] text-ink-400 dark:text-ink-500"
           style={{ marginLeft: PAD_PADDING - 8 }}
         >
           <span>{axisX.min}</span>

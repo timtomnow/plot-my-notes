@@ -5,7 +5,7 @@ export function BottomNav() {
   const navigate = useNavigate();
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-200 bg-white/90 backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-ink-200 bg-white/90 backdrop-blur dark:border-ink-800 dark:bg-ink-900/90 md:hidden"
       style={{ paddingBottom: 'var(--safe-bottom)' }}
     >
       <div className="relative mx-auto grid max-w-md grid-cols-5 items-end px-2 pb-2 pt-1">
@@ -16,7 +16,7 @@ export function BottomNav() {
           <button
             type="button"
             onClick={() => navigate('/new')}
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-ink-900 text-ink-50 shadow-lg active:scale-95"
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-ink-900 text-ink-50 shadow-lg active:scale-95 dark:bg-ink-50 dark:text-ink-900"
             aria-label="New entry"
           >
             <Plus size={26} />
@@ -45,7 +45,9 @@ function NavItem({ to, label, Icon, end }: NavItemProps) {
       className={({ isActive }) =>
         [
           'flex flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition',
-          isActive ? 'text-ink-900' : 'text-ink-400',
+          isActive
+            ? 'text-ink-900 dark:text-ink-50'
+            : 'text-ink-400 dark:text-ink-500',
         ].join(' ')
       }
     >

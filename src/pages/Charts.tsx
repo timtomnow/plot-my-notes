@@ -123,7 +123,7 @@ export function Charts() {
         <>
           <div className="card p-4 md:p-6">
             <div className="mb-3 flex items-center justify-end">
-              <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-ink-600">
+              <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-ink-600 dark:text-ink-400">
                 <span>Connect by date</span>
                 <button
                   type="button"
@@ -132,12 +132,14 @@ export function Charts() {
                   onClick={() => setConnectByDate((v) => !v)}
                   className={[
                     'relative h-5 w-9 rounded-full transition',
-                    connectByDate ? 'bg-ink-900' : 'bg-ink-300',
+                    connectByDate
+                      ? 'bg-ink-900 dark:bg-ink-50'
+                      : 'bg-ink-300 dark:bg-ink-700',
                   ].join(' ')}
                 >
                   <span
                     className={[
-                      'absolute top-0.5 h-4 w-4 rounded-full bg-white transition',
+                      'absolute top-0.5 h-4 w-4 rounded-full bg-white transition dark:bg-ink-900',
                       connectByDate ? 'left-[18px]' : 'left-0.5',
                     ].join(' ')}
                   />
@@ -157,10 +159,10 @@ export function Charts() {
           <div className="mt-4 grid grid-cols-1 gap-4">
             <div className="card p-4 md:p-5">
               <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-sm font-medium text-ink-700">
-                  {axisX.name} <span className="text-ink-400">over time</span>
+                <h3 className="text-sm font-medium text-ink-700 dark:text-ink-200">
+                  {axisX.name} <span className="text-ink-400 dark:text-ink-500">over time</span>
                 </h3>
-                <span className="text-[10px] uppercase tracking-wider text-ink-400">X axis</span>
+                <span className="text-[10px] uppercase tracking-wider text-ink-400 dark:text-ink-500">X axis</span>
               </div>
               <LineChart1D
                 axis={axisX}
@@ -174,10 +176,10 @@ export function Charts() {
             </div>
             <div className="card p-4 md:p-5">
               <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-sm font-medium text-ink-700">
-                  {axisY.name} <span className="text-ink-400">over time</span>
+                <h3 className="text-sm font-medium text-ink-700 dark:text-ink-200">
+                  {axisY.name} <span className="text-ink-400 dark:text-ink-500">over time</span>
                 </h3>
-                <span className="text-[10px] uppercase tracking-wider text-ink-400">Y axis</span>
+                <span className="text-[10px] uppercase tracking-wider text-ink-400 dark:text-ink-500">Y axis</span>
               </div>
               <LineChart1D
                 axis={axisY}
@@ -205,12 +207,12 @@ export function Charts() {
       )}
 
       {!trackingType && (
-        <div className="card rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400">
+        <div className="card rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400 dark:bg-ink-800/50 dark:text-ink-500">
           Select a tracking type.
         </div>
       )}
 
-      <p className="mt-3 text-xs text-ink-400">
+      <p className="mt-3 text-xs text-ink-400 dark:text-ink-500">
         {filteredEntries.length} entr{filteredEntries.length === 1 ? 'y' : 'ies'} in range.
       </p>
 
@@ -232,22 +234,22 @@ function PointDetail({ entry, onClose }: { entry: JournalEntry | null; onClose: 
   return (
     <Modal open={!!entry} onClose={onClose} title={entry.title || t?.name || 'Entry'}>
       <div className="space-y-3 text-sm">
-        <div className="text-ink-500">{formatDay(entry.date)}</div>
-        <div className="grid grid-cols-2 gap-3 rounded-xl bg-ink-50 p-3 tabular-nums">
+        <div className="text-ink-500 dark:text-ink-400">{formatDay(entry.date)}</div>
+        <div className="grid grid-cols-2 gap-3 rounded-xl bg-ink-50 p-3 tabular-nums dark:bg-ink-800/40">
           {ax && (
             <div>
-              <div className="text-xs text-ink-500">{ax.name}</div>
+              <div className="text-xs text-ink-500 dark:text-ink-400">{ax.name}</div>
               <div className="text-xl font-semibold">{fmt(entry.x, ax)}</div>
             </div>
           )}
           {ay && entry.y !== null && (
             <div>
-              <div className="text-xs text-ink-500">{ay.name}</div>
+              <div className="text-xs text-ink-500 dark:text-ink-400">{ay.name}</div>
               <div className="text-xl font-semibold">{fmt(entry.y, ay)}</div>
             </div>
           )}
         </div>
-        {entry.notes && <p className="whitespace-pre-wrap text-ink-700">{entry.notes}</p>}
+        {entry.notes && <p className="whitespace-pre-wrap text-ink-700 dark:text-ink-200">{entry.notes}</p>}
       </div>
     </Modal>
   );

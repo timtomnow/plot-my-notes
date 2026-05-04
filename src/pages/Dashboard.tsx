@@ -75,7 +75,7 @@ export function Dashboard() {
 
       {insights.length > 0 && (
         <section className="mb-8">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-400">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-400 dark:text-ink-500">
             Quick insight
           </h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -89,10 +89,10 @@ export function Dashboard() {
       {recent5.length > 0 && (
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-400">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-ink-400 dark:text-ink-500">
               Recent
             </h2>
-            <Link to="/entries" className="text-xs text-ink-500 hover:text-ink-900">
+            <Link to="/entries" className="text-xs text-ink-500 hover:text-ink-900 dark:text-ink-400 dark:hover:text-ink-50">
               See all →
             </Link>
           </div>
@@ -132,12 +132,12 @@ function InsightCard({ type, axisX, axisY, xAvg, yAvg, count }: InsightProps) {
   return (
     <Link
       to="/charts"
-      className="block rounded-2xl border border-ink-200 bg-white p-4 transition hover:border-ink-300"
+      className="block rounded-2xl border border-ink-200 bg-white p-4 transition hover:border-ink-300 dark:border-ink-800 dark:bg-ink-900 dark:hover:border-ink-700"
     >
       <div className="flex items-center gap-2">
         <span className="h-2 w-2 rounded-full" style={{ backgroundColor: type.color }} />
         <span className="text-sm font-medium">{type.name}</span>
-        <span className="ml-auto text-[10px] uppercase tracking-wider text-ink-400">
+        <span className="ml-auto text-[10px] uppercase tracking-wider text-ink-400 dark:text-ink-500">
           {type.axisYId ? '2D' : '1D'} · {count}
         </span>
       </div>
@@ -153,8 +153,8 @@ function Stat({ axis, avg }: { axis: Axis; avg: WindowAvg }) {
   if (avg.current === null) {
     return (
       <div>
-        <div className="text-[10px] uppercase tracking-wider text-ink-400">{axis.name}</div>
-        <div className="text-base text-ink-400">No data</div>
+        <div className="text-[10px] uppercase tracking-wider text-ink-400 dark:text-ink-500">{axis.name}</div>
+        <div className="text-base text-ink-400 dark:text-ink-500">No data</div>
       </div>
     );
   }
@@ -168,14 +168,14 @@ function Stat({ axis, avg }: { axis: Axis; avg: WindowAvg }) {
         ? ArrowUpRight
         : ArrowDownRight;
   const tone = avg.delta == null || Math.abs(avg.delta) < axis.step / 2
-    ? 'text-ink-400'
+    ? 'text-ink-400 dark:text-ink-500'
     : avg.delta > 0
       ? 'text-emerald-600'
       : 'text-amber-600';
 
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wider text-ink-400">{axis.name}</div>
+      <div className="text-[10px] uppercase tracking-wider text-ink-400 dark:text-ink-500">{axis.name}</div>
       <div className="mt-0.5 flex items-baseline gap-1.5">
         <div className="text-xl font-semibold tabular-nums">
           {formatScore(avg.current, axis)}
@@ -187,7 +187,7 @@ function Stat({ axis, avg }: { axis: Axis; avg: WindowAvg }) {
           </div>
         )}
       </div>
-      <div className="text-[10px] text-ink-400">7-day avg</div>
+      <div className="text-[10px] text-ink-400 dark:text-ink-500">7-day avg</div>
     </div>
   );
 }

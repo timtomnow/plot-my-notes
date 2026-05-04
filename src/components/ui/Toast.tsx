@@ -62,7 +62,9 @@ function ToastItem({ toast }: { toast: Toast }) {
     <div
       className={[
         'pointer-events-auto rounded-full px-4 py-2 text-sm font-medium text-white shadow-lg transition',
-        toast.tone === 'error' ? 'bg-red-600' : 'bg-ink-900',
+        toast.tone === 'error'
+          ? 'bg-red-600'
+          : 'bg-ink-900 dark:bg-ink-100 dark:text-ink-900',
         shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
       ].join(' ')}
     >

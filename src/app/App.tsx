@@ -8,23 +8,26 @@ import { Axes } from '@/pages/Axes';
 import { TrackingTypes } from '@/pages/TrackingTypes';
 import { Settings } from '@/pages/Settings';
 import { ToastProvider } from '@/components/ui/Toast';
+import { ThemeProvider } from './theme';
 
 export function App() {
   return (
-    <ToastProvider>
-      <Routes>
-        <Route element={<AppShell />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/new" element={<NewEntry />} />
-          <Route path="/new/:trackingTypeId" element={<NewEntry />} />
-          <Route path="/entries" element={<Entries />} />
-          <Route path="/charts" element={<Charts />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/settings/axes" element={<Axes />} />
-          <Route path="/settings/tracking-types" element={<TrackingTypes />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
-    </ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/new" element={<NewEntry />} />
+            <Route path="/new/:trackingTypeId" element={<NewEntry />} />
+            <Route path="/entries" element={<Entries />} />
+            <Route path="/charts" element={<Charts />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings/axes" element={<Axes />} />
+            <Route path="/settings/tracking-types" element={<TrackingTypes />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }

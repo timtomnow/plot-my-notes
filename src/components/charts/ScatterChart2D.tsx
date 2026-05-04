@@ -31,7 +31,7 @@ type Point = {
 export function ScatterChart2D({ axisX, axisY, color, entries, connectByDate, onPointClick }: Props) {
   const filtered = entries.filter((e) => e.y !== null && e.y !== undefined);
   if (filtered.length === 0) {
-    return <div className="rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400">No data in range.</div>;
+    return <div className="rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400 dark:bg-ink-800/50 dark:text-ink-500">No data in range.</div>;
   }
   const ts = filtered.map((e) => e.date);
   const minTs = Math.min(...ts);
@@ -55,40 +55,40 @@ export function ScatterChart2D({ axisX, axisY, color, entries, connectByDate, on
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <ScatterChart margin={{ top: 10, right: 16, bottom: 16, left: -8 }}>
-          <CartesianGrid stroke="#e4e4e7" strokeDasharray="3 3" />
+          <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" />
           <XAxis
             type="number"
             dataKey="x"
             domain={[axisX.min, axisX.max]}
             name={axisX.name}
-            stroke="#a1a1aa"
+            stroke="var(--chart-axis)"
             fontSize={11}
-            label={{ value: axisX.name, position: 'insideBottom', offset: -8, fontSize: 11, fill: '#71717a' }}
+            label={{ value: axisX.name, position: 'insideBottom', offset: -8, fontSize: 11, fill: 'var(--chart-text)' }}
           />
           <YAxis
             type="number"
             dataKey="y"
             domain={[axisY.min, axisY.max]}
             name={axisY.name}
-            stroke="#a1a1aa"
+            stroke="var(--chart-axis)"
             fontSize={11}
             width={40}
-            label={{ value: axisY.name, angle: -90, position: 'insideLeft', fontSize: 11, fill: '#71717a' }}
+            label={{ value: axisY.name, angle: -90, position: 'insideLeft', fontSize: 11, fill: 'var(--chart-text)' }}
           />
           <ZAxis range={[60, 60]} />
           <Tooltip
-            cursor={{ strokeDasharray: '3 3', stroke: '#71717a' }}
+            cursor={{ strokeDasharray: '3 3', stroke: 'var(--chart-text)' }}
             content={({ active, payload }) => {
               if (!active || !payload || payload.length === 0) return null;
               const p = payload[0]?.payload as Point | undefined;
               if (!p) return null;
               return (
-                <div className="rounded-lg border border-ink-200 bg-white px-3 py-2 text-xs shadow-md">
-                  <div className="text-ink-500">{formatDayShort(p.ts)}</div>
+                <div className="rounded-lg border border-ink-200 bg-white px-3 py-2 text-xs shadow-md dark:border-ink-800 dark:bg-ink-900">
+                  <div className="text-ink-500 dark:text-ink-400">{formatDayShort(p.ts)}</div>
                   <div className="font-semibold tabular-nums" style={{ color }}>
                     {axisX.name}: {p.x} · {axisY.name}: {p.y}
                   </div>
-                  {p.entry.title && <div className="mt-0.5 text-ink-700">{p.entry.title}</div>}
+                  {p.entry.title && <div className="mt-0.5 text-ink-700 dark:text-ink-200">{p.entry.title}</div>}
                 </div>
               );
             }}

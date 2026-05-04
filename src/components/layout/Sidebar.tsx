@@ -12,7 +12,7 @@ const items = [
 
 export function Sidebar() {
   return (
-    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-ink-200 bg-white md:flex md:flex-col">
+    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-ink-200 bg-white dark:border-ink-800 dark:bg-ink-900 md:flex md:flex-col">
       <div className="px-6 py-6">
         <Logo />
       </div>
@@ -27,8 +27,8 @@ export function Sidebar() {
                   [
                     'flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition',
                     isActive
-                      ? 'bg-ink-900 text-ink-50'
-                      : 'text-ink-700 hover:bg-ink-100',
+                      ? 'bg-ink-900 text-ink-50 dark:bg-ink-50 dark:text-ink-900'
+                      : 'text-ink-700 hover:bg-ink-100 dark:text-ink-300 dark:hover:bg-ink-800',
                   ].join(' ')
                 }
               >
@@ -39,8 +39,8 @@ export function Sidebar() {
           ))}
         </ul>
       </nav>
-      <div className="px-6 py-4 text-xs text-ink-400">
-        Press <kbd className="rounded bg-ink-100 px-1.5 py-0.5 font-mono">n</kbd> for new entry
+      <div className="px-6 py-4 text-xs text-ink-400 dark:text-ink-500">
+        Press <kbd className="rounded bg-ink-100 px-1.5 py-0.5 font-mono dark:bg-ink-800 dark:text-ink-200">n</kbd> for new entry
       </div>
     </aside>
   );
