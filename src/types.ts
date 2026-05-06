@@ -1,9 +1,17 @@
+export type AxisBand = {
+  id: string;
+  max: number;
+  label?: string;
+  color?: string;
+};
+
 export type Axis = {
   id: string;
   name: string;
   min: number;
   max: number;
   step: number;
+  bands?: AxisBand[];
   createdAt: number;
 };
 
@@ -24,6 +32,7 @@ export type JournalEntry = {
   y: number | null;
   title?: string;
   notes?: string;
+  tags?: string[];
   imageStub?: string;
   createdAt: number;
   updatedAt: number;
