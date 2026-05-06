@@ -119,6 +119,7 @@ export function Axes() {
       )}
 
       <AxisForm
+        key={editing?.id ?? (creating ? 'new' : 'closed')}
         open={creating || editing !== null}
         axis={editing}
         onClose={() => {
@@ -157,7 +158,6 @@ function AxisForm({ open, axis, onClose, onSubmit }: FormProps) {
   const [error, setError] = useState<string | null>(null);
 
   // Sync internal state when the axis prop changes (modal reused for edit)
-  const key = axis?.id ?? 'new';
   const numericMin = Number(min);
   const numericMax = Number(max);
   const rangeIsValid = Number.isFinite(numericMin) && Number.isFinite(numericMax) && numericMin < numericMax;
@@ -182,7 +182,6 @@ function AxisForm({ open, axis, onClose, onSubmit }: FormProps) {
 
   return (
     <Modal
-      key={key}
       open={open}
       onClose={onClose}
       title={axis ? 'Edit axis' : 'New axis'}
