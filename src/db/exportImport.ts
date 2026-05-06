@@ -1,5 +1,5 @@
 import { db, SCHEMA_VERSION } from './schema';
-import type { Axis, JournalEntry, TrackingType } from '@/types';
+import type { Axis, AxisBand, JournalEntry, TrackingType } from '@/types';
 
 export type ExportPayload = {
   version: number;
@@ -91,12 +91,25 @@ export function parseExportPayload(value: unknown): ExportPayload {
 
 function requireAxis(a: unknown, idx: number): Axis {
   const o = asObj(a, `axes[${idx}]`);
+  let bands: AxisBand[] | undefined;
+  if (Array.isArray(o.bands)) {
+    bands = o.bands.map((b, j) => {
+      const bo = asObj(b, `axes[${idx}].bands[${j}]`);
+      return {
+        id: requireString(bo.id, `axes[${idx}].bands[${j}].id`),
+        max: requireNumber(bo.max, `axes[${idx}].bands[${j}].max`),
+        label: typeof bo.label === 'string' ? bo.label : undefined,
+        color: typeof bo.color === 'string' ? bo.color : undefined,
+      };
+    });
+  }
   return {
     id: requireString(o.id, `axes[${idx}].id`),
     name: requireString(o.name, `axes[${idx}].name`),
     min: requireNumber(o.min, `axes[${idx}].min`),
     max: requireNumber(o.max, `axes[${idx}].max`),
     step: requireNumber(o.step, `axes[${idx}].step`),
+    bands,
     createdAt: requireNumber(o.createdAt, `axes[${idx}].createdAt`),
   };
 }
@@ -120,6 +133,10 @@ function requireEntry(e: unknown, idx: number): JournalEntry {
   const o = asObj(e, `entries[${idx}]`);
   const yRaw = o.y;
   const y = yRaw === null || yRaw === undefined ? null : requireNumber(yRaw, `entries[${idx}].y`);
+  let tags: string[] | undefined;
+  if (Array.isArray(o.tags)) {
+    tags = o.tags.filter((t): t is string => typeof t === 'string' && t.length > 0);
+  }
   return {
     id: requireString(o.id, `entries[${idx}].id`),
     trackingTypeId: requireString(o.trackingTypeId, `entries[${idx}].trackingTypeId`),
@@ -128,6 +145,7 @@ function requireEntry(e: unknown, idx: number): JournalEntry {
     y,
     title: typeof o.title === 'string' ? o.title : undefined,
     notes: typeof o.notes === 'string' ? o.notes : undefined,
+    tags,
     imageStub: typeof o.imageStub === 'string' ? o.imageStub : undefined,
     createdAt: requireNumber(o.createdAt, `entries[${idx}].createdAt`),
     updatedAt: requireNumber(o.updatedAt, `entries[${idx}].updatedAt`),

@@ -11,6 +11,8 @@ export class PlotMyNotesDB extends Dexie {
 
   constructor() {
     super('plot-my-notes');
+    // bands on axes and tags on entries are non-indexed extra fields — no schema
+    // bump needed. IndexedDB is schemaless for columns that aren't indexed.
     this.version(1).stores({
       axes: 'id, name, createdAt',
       trackingTypes: 'id, name, axisXId, axisYId, createdAt',

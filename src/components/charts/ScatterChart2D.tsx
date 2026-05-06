@@ -1,5 +1,6 @@
 import {
   CartesianGrid,
+  ReferenceArea,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -10,6 +11,7 @@ import {
 } from 'recharts';
 import type { Axis, JournalEntry } from '@/types';
 import { formatDayShort } from '@/lib/date';
+import { resolveBands, type ResolvedBand } from '@/lib/bands';
 
 type Props = {
   axisX: Axis;
@@ -51,11 +53,38 @@ export function ScatterChart2D({ axisX, axisY, color, entries, connectByDate, on
       entry: e,
     }));
 
+  const bandsX = resolveBands(axisX);
+  const bandsY = resolveBands(axisY);
+  const cells = buildBandCells(axisX, axisY, bandsX, bandsY);
+
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <ScatterChart margin={{ top: 10, right: 16, bottom: 16, left: -8 }}>
           <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" />
+          {cells.map((c) => (
+            <ReferenceArea
+              key={c.key}
+              x1={c.x1}
+              x2={c.x2}
+              y1={c.y1}
+              y2={c.y2}
+              fill={c.fill}
+              fillOpacity={c.opacity}
+              stroke="none"
+              ifOverflow="extendDomain"
+              label={
+                c.label
+                  ? {
+                      value: c.label,
+                      position: 'insideTopLeft',
+                      fontSize: 10,
+                      fill: 'var(--chart-text)',
+                    }
+                  : undefined
+              }
+            />
+          ))}
           <XAxis
             type="number"
             dataKey="x"
@@ -113,4 +142,81 @@ export function ScatterChart2D({ axisX, axisY, color, entries, connectByDate, on
       </ResponsiveContainer>
     </div>
   );
+}
+
+type BandCell = {
+  key: string;
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+  fill: string;
+  opacity: number;
+  label?: string;
+};
+
+const NEUTRAL_TINT_A = 'rgba(15, 23, 42, 0.06)';
+const NEUTRAL_TINT_B = 'rgba(15, 23, 42, 0.00)';
+
+/**
+ * Build the rectangular cells used to shade band regions on the 2D chart.
+ * If both axes have bands we render a checkerboard of [xBand] × [yBand] cells;
+ * if only one axis has bands we render stripes for that axis.
+ */
+function buildBandCells(
+  axisX: Axis,
+  axisY: Axis,
+  bandsX: ResolvedBand[],
+  bandsY: ResolvedBand[],
+): BandCell[] {
+  if (bandsX.length === 0 && bandsY.length === 0) return [];
+  // Treat the absent axis as a single full-range "band" so the cell math is uniform.
+  const xs = bandsX.length > 0 ? bandsX : [fullSpanBand(axisX)];
+  const ys = bandsY.length > 0 ? bandsY : [fullSpanBand(axisY)];
+  const cells: BandCell[] = [];
+  for (let i = 0; i < xs.length; i++) {
+    for (let j = 0; j < ys.length; j++) {
+      const xb = xs[i];
+      const yb = ys[j];
+      const explicit =
+        (bandsX.length > 0 && xb.hasExplicitColor) ||
+        (bandsY.length > 0 && yb.hasExplicitColor);
+      // If either band has an explicit color, prefer it (X wins for cells).
+      let fill: string;
+      let opacity: number;
+      if (explicit) {
+        fill = xb.hasExplicitColor && bandsX.length > 0 ? xb.color : yb.color;
+        opacity = 0.35;
+      } else {
+        fill = (i + j) % 2 === 0 ? NEUTRAL_TINT_A : NEUTRAL_TINT_B;
+        opacity = 1;
+      }
+      // Only the top-left cell of each X band shows the X label, similarly for Y —
+      // avoids clutter while still giving users a quadrant readout.
+      const labelParts: string[] = [];
+      if (j === ys.length - 1 && xb.label) labelParts.push(xb.label);
+      if (i === 0 && yb.label) labelParts.push(yb.label);
+      cells.push({
+        key: `${xb.id}:${yb.id}`,
+        x1: xb.from,
+        x2: xb.to,
+        y1: yb.from,
+        y2: yb.to,
+        fill,
+        opacity,
+        label: labelParts.join(' · ') || undefined,
+      });
+    }
+  }
+  return cells;
+}
+
+function fullSpanBand(axis: Axis): ResolvedBand {
+  return {
+    id: `${axis.id}:full`,
+    from: axis.min,
+    to: axis.max,
+    color: NEUTRAL_TINT_B,
+    hasExplicitColor: false,
+  };
 }

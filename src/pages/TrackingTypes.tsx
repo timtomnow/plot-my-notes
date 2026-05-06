@@ -142,6 +142,7 @@ export function TrackingTypes() {
       )}
 
       <TrackingTypeForm
+        key={editing?.id ?? (creating ? 'new' : 'closed')}
         open={creating || editing !== null}
         type={editing}
         existingColors={(types ?? []).map((t) => t.color)}
@@ -182,11 +183,8 @@ function TrackingTypeForm({ open, type, existingColors, onClose, onSubmit }: For
   const [axisYId, setAxisYId] = useState(type?.axisYId ?? '');
   const [error, setError] = useState<string | null>(null);
 
-  const key = type?.id ?? 'new';
-
   return (
     <Modal
-      key={key}
       open={open}
       onClose={onClose}
       title={type ? 'Edit tracking type' : 'New tracking type'}

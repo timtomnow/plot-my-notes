@@ -2,6 +2,7 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceArea,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -9,6 +10,7 @@ import {
 } from 'recharts';
 import type { Axis, JournalEntry } from '@/types';
 import { formatDayShort } from '@/lib/date';
+import { resolveBands } from '@/lib/bands';
 
 type Props = {
   axis: Axis;
@@ -63,6 +65,27 @@ export function LineChart1D({
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: -16 }}>
           <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" vertical={false} />
+          {resolveBands(axis).map((b) => (
+            <ReferenceArea
+              key={b.id}
+              y1={b.from}
+              y2={b.to}
+              fill={b.color}
+              fillOpacity={b.hasExplicitColor ? 0.35 : 1}
+              stroke="none"
+              ifOverflow="extendDomain"
+              label={
+                b.label
+                  ? {
+                      value: b.label,
+                      position: 'insideTopRight',
+                      fontSize: 10,
+                      fill: 'var(--chart-text)',
+                    }
+                  : undefined
+              }
+            />
+          ))}
           <XAxis
             dataKey="ts"
             tickFormatter={(v: number) => formatDayShort(v)}

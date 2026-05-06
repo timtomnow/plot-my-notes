@@ -5,6 +5,8 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Slider1D } from '@/components/inputs/Slider1D';
 import { Pad2D } from '@/components/inputs/Pad2D';
+import { TagInput } from '@/components/inputs/TagInput';
+import { dedupeTags, rankTags } from '@/lib/tags';
 import {
   useAxes,
   useTrackingTypes,
@@ -70,6 +72,9 @@ export function NewEntry() {
   const [date, setDate] = useState<number>(todayStart());
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const allEntries = useEntries();
+  const tagSuggestions = useMemo(() => rankTags(allEntries), [allEntries]);
 
   useEffect(() => {
     if (editing && editing.trackingTypeId === trackingTypeId) {
@@ -78,6 +83,7 @@ export function NewEntry() {
       setDate(editing.date);
       setTitle(editing.title ?? '');
       setNotes(editing.notes ?? '');
+      setTags(editing.tags ?? []);
       return;
     }
     if (axisX) setX((axisX.min + axisX.max) / 2);
@@ -203,6 +209,12 @@ export function NewEntry() {
             placeholder="What happened? What helped?"
           />
         </div>
+        <div>
+          <span className="label">Tags (optional)</span>
+          <div className="mt-1">
+            <TagInput value={tags} onChange={setTags} suggestions={tagSuggestions} />
+          </div>
+        </div>
       </div>
 
       {/* Save bar */}
@@ -222,6 +234,7 @@ export function NewEntry() {
             onClick={async () => {
               if (!trackingType) return;
               try {
+                const cleanedTags = dedupeTags(tags);
                 if (editing) {
                   await updateEntry(editing.id, {
                     trackingTypeId: trackingType.id,
@@ -230,6 +243,7 @@ export function NewEntry() {
                     y: trackingType.axisYId ? y : null,
                     title: title.trim() || undefined,
                     notes: notes.trim() || undefined,
+                    tags: cleanedTags.length > 0 ? cleanedTags : undefined,
                   });
                   toast.show('Entry updated');
                 } else {
@@ -240,6 +254,7 @@ export function NewEntry() {
                     y: trackingType.axisYId ? y : null,
                     title: title.trim() || undefined,
                     notes: notes.trim() || undefined,
+                    tags: cleanedTags.length > 0 ? cleanedTags : undefined,
                   });
                   toast.show('Entry saved');
                 }
