@@ -11,6 +11,7 @@ import {
   Sun,
   Moon,
   Monitor,
+  Bell,
 } from 'lucide-react';
 import { useTheme, type ThemePref } from '@/app/theme';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -51,6 +52,13 @@ export function Settings() {
           title="Tracking Types"
           subtitle={`${types?.length ?? 0} defined`}
           description="What you log — combine one or two axes (1D or 2D)."
+        />
+        <SettingLink
+          to="/settings/reminders"
+          icon={<Bell size={20} />}
+          title="Reminders"
+          subtitle="calendar file"
+          description="Generate an .ics file your phone's calendar can import to nudge you on a schedule."
         />
       </ul>
 

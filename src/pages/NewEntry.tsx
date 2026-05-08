@@ -35,6 +35,16 @@ export function NewEntry() {
   const navigate = useNavigate();
   const toast = useToast();
 
+  // Deep-link safety: if the URL points at a tracking type that doesn't exist
+  // on this device (e.g. an old reminder file referencing a deleted type),
+  // bounce to home instead of silently picking a different type.
+  useEffect(() => {
+    if (!params.trackingTypeId) return;
+    if (!types) return;
+    if (types.some((t) => t.id === params.trackingTypeId)) return;
+    navigate('/', { replace: true });
+  }, [params.trackingTypeId, types, navigate]);
+
   // Selected tracking type — initial preference: URL param > editing entry > last used > most recent in entries > first
   const [trackingTypeId, setTrackingTypeId] = useState<string | null>(null);
   useEffect(() => {
