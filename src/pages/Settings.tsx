@@ -27,6 +27,7 @@ import {
   type ImportMode,
   type ImportSummary,
 } from '@/db/exportImport';
+import { openTtnBackupRestore } from '@/lib/ttnBackup';
 import { useToast } from '@/components/ui/Toast';
 
 const REPO_URL = 'https://github.com/timtomnow/plot-my-notes';
@@ -256,6 +257,19 @@ function DataSection() {
           <button type="button" className="btn-secondary" onClick={onPickFile}>
             <Upload size={14} /> Import…
           </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => {
+              try {
+                openTtnBackupRestore();
+              } catch (err) {
+                toast.show((err as Error).message, 'error');
+              }
+            }}
+          >
+            Restore from ttn-backup
+          </button>
           <input
             ref={fileInputRef}
             type="file"
@@ -264,6 +278,10 @@ function DataSection() {
             onChange={onFileChange}
           />
         </div>
+        <p className="mt-3 text-xs text-ink-500 dark:text-ink-400">
+          ttn-backup is a separate utility that snapshots all your TTN apps into one bundle on a schedule.{' '}
+          <a href="/ttn-backup/" className="underline">Open ttn-backup →</a>
+        </p>
       </div>
 
       <ImportConfirmModal
