@@ -1,5 +1,5 @@
 import { db, SCHEMA_VERSION } from './schema';
-import type { Axis, AxisBand, JournalEntry, TrackingType } from '@/types';
+import type { Axis, AxisBand, ChartRegion, JournalEntry, TrackingType } from '@/types';
 
 export type ExportPayload = {
   version: number;
@@ -110,6 +110,8 @@ function requireAxis(a: unknown, idx: number): Axis {
     max: requireNumber(o.max, `axes[${idx}].max`),
     step: requireNumber(o.step, `axes[${idx}].step`),
     bands,
+    shortDescription: typeof o.shortDescription === 'string' ? o.shortDescription : undefined,
+    description: typeof o.description === 'string' ? o.description : undefined,
     createdAt: requireNumber(o.createdAt, `axes[${idx}].createdAt`),
   };
 }
@@ -119,12 +121,31 @@ function requireTrackingType(t: unknown, idx: number): TrackingType {
   const axisYRaw = o.axisYId;
   const axisYId =
     axisYRaw === null || axisYRaw === undefined ? null : requireString(axisYRaw, `trackingTypes[${idx}].axisYId`);
+  let regions: ChartRegion[] | undefined;
+  if (Array.isArray(o.regions)) {
+    regions = o.regions.map((r, j) => {
+      const ro = asObj(r, `trackingTypes[${idx}].regions[${j}]`);
+      return {
+        id: requireString(ro.id, `trackingTypes[${idx}].regions[${j}].id`),
+        x1: requireNumber(ro.x1, `trackingTypes[${idx}].regions[${j}].x1`),
+        x2: requireNumber(ro.x2, `trackingTypes[${idx}].regions[${j}].x2`),
+        y1: requireNumber(ro.y1, `trackingTypes[${idx}].regions[${j}].y1`),
+        y2: requireNumber(ro.y2, `trackingTypes[${idx}].regions[${j}].y2`),
+        color: requireString(ro.color, `trackingTypes[${idx}].regions[${j}].color`),
+        label: typeof ro.label === 'string' ? ro.label : undefined,
+        opacity: typeof ro.opacity === 'number' ? ro.opacity : undefined,
+      };
+    });
+  }
   return {
     id: requireString(o.id, `trackingTypes[${idx}].id`),
     name: requireString(o.name, `trackingTypes[${idx}].name`),
     color: requireString(o.color, `trackingTypes[${idx}].color`),
     axisXId: requireString(o.axisXId, `trackingTypes[${idx}].axisXId`),
     axisYId,
+    regions,
+    shortDescription: typeof o.shortDescription === 'string' ? o.shortDescription : undefined,
+    description: typeof o.description === 'string' ? o.description : undefined,
     createdAt: requireNumber(o.createdAt, `trackingTypes[${idx}].createdAt`),
   };
 }

@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Slider1D } from '@/components/inputs/Slider1D';
 import { Pad2D } from '@/components/inputs/Pad2D';
 import { TagInput } from '@/components/inputs/TagInput';
+import { DescriptionInfo } from '@/components/ui/DescriptionInfo';
 import { dedupeTags, rankTags } from '@/lib/tags';
 import {
   useAxes,
@@ -176,11 +177,21 @@ export function NewEntry() {
             x={x}
             y={y}
             color={trackingType?.color}
+            regions={trackingType?.regions}
             onChange={(nx, ny) => {
               setX(nx);
               setY(ny);
             }}
           />
+        )}
+        {trackingType && (trackingType.shortDescription || trackingType.description) && (
+          <div className="mt-3 border-t border-ink-100 pt-3 text-sm dark:border-ink-800">
+            <DescriptionInfo
+              title={trackingType.name}
+              shortDescription={trackingType.shortDescription}
+              description={trackingType.description}
+            />
+          </div>
         )}
       </div>
 

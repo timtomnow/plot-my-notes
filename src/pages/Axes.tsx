@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Modal } from '@/components/ui/Modal';
+import { DescriptionInfo } from '@/components/ui/DescriptionInfo';
 import { useAxes, useTrackingTypes, createAxis, updateAxis, deleteAxis } from '@/db/repo';
 import type { Axis, AxisBand } from '@/types';
 import { isAxisValid } from '@/lib/score';
@@ -70,7 +71,14 @@ export function Axes() {
                 className="flex items-center justify-between rounded-2xl border border-ink-200 bg-white p-4 dark:border-ink-800 dark:bg-ink-900"
               >
                 <div className="min-w-0">
-                  <div className="font-medium">{axis.name}</div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-medium">{axis.name}</span>
+                    <DescriptionInfo
+                      title={axis.name}
+                      description={axis.description}
+                      showShort={false}
+                    />
+                  </div>
                   <div className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">
                     {axis.min} → {axis.max} · step {axis.step} · used by {usage}{' '}
                     type{usage === 1 ? '' : 's'}
@@ -78,6 +86,11 @@ export function Axes() {
                       <> · {axis.bands.length} band{axis.bands.length === 1 ? '' : 's'}</>
                     )}
                   </div>
+                  {axis.shortDescription && (
+                    <div className="mt-1 text-xs text-ink-500 dark:text-ink-400">
+                      {axis.shortDescription}
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -155,6 +168,8 @@ function AxisForm({ open, axis, onClose, onSubmit }: FormProps) {
   const [max, setMax] = useState(axis ? String(axis.max) : '10');
   const [step, setStep] = useState(axis ? String(axis.step) : '1');
   const [bands, setBands] = useState<AxisBand[]>(axis?.bands ?? []);
+  const [shortDescription, setShortDescription] = useState(axis?.shortDescription ?? '');
+  const [description, setDescription] = useState(axis?.description ?? '');
   const [error, setError] = useState<string | null>(null);
 
   // Sync internal state when the axis prop changes (modal reused for edit)
@@ -215,6 +230,8 @@ function AxisForm({ open, axis, onClose, onSubmit }: FormProps) {
               await onSubmit({
                 ...data,
                 bands: cleaned.length > 0 ? cleaned : undefined,
+                shortDescription: shortDescription.trim() || undefined,
+                description: description.trim() || undefined,
               });
             }}
           >
@@ -235,6 +252,26 @@ function AxisForm({ open, axis, onClose, onSubmit }: FormProps) {
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Happiness"
             autoFocus
+          />
+        </div>
+        <div>
+          <label className="label" htmlFor="axis-short">Short description (optional)</label>
+          <input
+            id="axis-short"
+            className="input mt-1"
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
+            placeholder="One line shown under the axis name"
+          />
+        </div>
+        <div>
+          <label className="label" htmlFor="axis-desc">Full description (optional)</label>
+          <textarea
+            id="axis-desc"
+            className="input mt-1 min-h-[72px] resize-y"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Longer explanation, shown behind an info button"
           />
         </div>
         <div className="grid grid-cols-3 gap-3">

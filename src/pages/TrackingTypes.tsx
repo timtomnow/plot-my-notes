@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
-import { Plus, Pencil, Trash2, ChevronLeft, Layers } from 'lucide-react';
+import { Plus, Pencil, Trash2, ChevronLeft, Layers, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Modal } from '@/components/ui/Modal';
+import { DescriptionInfo } from '@/components/ui/DescriptionInfo';
 import {
   useAxes,
   useTrackingTypes,
@@ -13,8 +14,9 @@ import {
   deleteTrackingType,
 } from '@/db/repo';
 import { PALETTE, nextColor } from '@/lib/color';
+import { REGION_PALETTE, newRegionId, validateRegions } from '@/lib/regions';
 import { useToast } from '@/components/ui/Toast';
-import type { TrackingType } from '@/types';
+import type { Axis, ChartRegion, TrackingType } from '@/types';
 
 export function TrackingTypes() {
   const types = useTrackingTypes();
@@ -95,11 +97,26 @@ export function TrackingTypes() {
                     style={{ backgroundColor: t.color }}
                   />
                   <div className="min-w-0">
-                    <div className="font-medium">{t.name}</div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium">{t.name}</span>
+                      <DescriptionInfo
+                        title={t.name}
+                        description={t.description}
+                        showShort={false}
+                      />
+                    </div>
                     <div className="mt-0.5 text-xs text-ink-500 dark:text-ink-400">
                       {t.axisYId ? '2D' : '1D'} · X: {axisName(t.axisXId)}
                       {t.axisYId && <> · Y: {axisName(t.axisYId)}</>} · {usage} entr{usage === 1 ? 'y' : 'ies'}
+                      {t.regions && t.regions.length > 0 && (
+                        <> · {t.regions.length} region{t.regions.length === 1 ? '' : 's'}</>
+                      )}
                     </div>
+                    {t.shortDescription && (
+                      <div className="mt-1 text-xs text-ink-500 dark:text-ink-400">
+                        {t.shortDescription}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
@@ -181,7 +198,38 @@ function TrackingTypeForm({ open, type, existingColors, onClose, onSubmit }: For
   const [axisXId, setAxisXId] = useState(type?.axisXId ?? '');
   const [is2D, setIs2D] = useState(!!type?.axisYId);
   const [axisYId, setAxisYId] = useState(type?.axisYId ?? '');
+  const [shortDescription, setShortDescription] = useState(type?.shortDescription ?? '');
+  const [description, setDescription] = useState(type?.description ?? '');
+  const [regions, setRegions] = useState<ChartRegion[]>(type?.regions ?? []);
   const [error, setError] = useState<string | null>(null);
+
+  const resolvedXId = axisXId || axes?.[0]?.id || '';
+  const axisX = axes?.find((a) => a.id === resolvedXId) ?? null;
+  const axisY = is2D ? axes?.find((a) => a.id === axisYId) ?? null : null;
+
+  const addRegion = () => {
+    if (!axisX || !axisY) return;
+    const midX = (axisX.min + axisX.max) / 2;
+    const midY = (axisY.min + axisY.max) / 2;
+    setRegions((prev) => [
+      ...prev,
+      {
+        id: newRegionId(),
+        x1: axisX.min,
+        x2: midX,
+        y1: axisY.min,
+        y2: midY,
+        color: REGION_PALETTE[prev.length % REGION_PALETTE.length],
+        label: '',
+      },
+    ]);
+  };
+  const updateRegion = (id: string, patch: Partial<ChartRegion>) => {
+    setRegions((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  };
+  const removeRegion = (id: string) => {
+    setRegions((prev) => prev.filter((r) => r.id !== id));
+  };
 
   return (
     <Modal
@@ -201,12 +249,31 @@ function TrackingTypeForm({ open, type, existingColors, onClose, onSubmit }: For
               if (!x) return setError('Pick an X axis.');
               if (is2D && !axisYId) return setError('Pick a Y axis or switch to 1D.');
               if (is2D && axisYId === x) return setError('X and Y axes must differ.');
+              const cleanedRegions: ChartRegion[] = is2D
+                ? regions.map((r) => ({
+                    id: r.id,
+                    x1: Number(r.x1),
+                    x2: Number(r.x2),
+                    y1: Number(r.y1),
+                    y2: Number(r.y2),
+                    color: r.color,
+                    label: r.label?.trim() || undefined,
+                    opacity: typeof r.opacity === 'number' ? r.opacity : undefined,
+                  }))
+                : [];
+              if (is2D && axisX && axisY) {
+                const regionError = validateRegions(axisX, axisY, cleanedRegions);
+                if (regionError) return setError(regionError);
+              }
               setError(null);
               await onSubmit({
                 name: trimmed,
                 color,
                 axisXId: x,
                 axisYId: is2D ? axisYId : null,
+                regions: cleanedRegions.length > 0 ? cleanedRegions : undefined,
+                shortDescription: shortDescription.trim() || undefined,
+                description: description.trim() || undefined,
               });
             }}
           >
@@ -225,6 +292,27 @@ function TrackingTypeForm({ open, type, existingColors, onClose, onSubmit }: For
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Mood, Work, Fitness"
             autoFocus
+          />
+        </div>
+
+        <div>
+          <label className="label" htmlFor="tt-short">Short description (optional)</label>
+          <input
+            id="tt-short"
+            className="input mt-1"
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
+            placeholder="One line shown under the name"
+          />
+        </div>
+        <div>
+          <label className="label" htmlFor="tt-desc">Full description (optional)</label>
+          <textarea
+            id="tt-desc"
+            className="input mt-1 min-h-[72px] resize-y"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Longer explanation, shown behind an info button"
           />
         </div>
 
@@ -302,8 +390,135 @@ function TrackingTypeForm({ open, type, existingColors, onClose, onSubmit }: For
           </div>
         )}
 
+        {is2D && axisX && axisY && (
+          <RegionsEditor
+            axisX={axisX}
+            axisY={axisY}
+            regions={regions}
+            onAdd={addRegion}
+            onUpdate={updateRegion}
+            onRemove={removeRegion}
+          />
+        )}
+
         {error && <p className="text-sm text-red-600">{error}</p>}
       </div>
     </Modal>
+  );
+}
+
+type RegionsEditorProps = {
+  axisX: Axis;
+  axisY: Axis;
+  regions: ChartRegion[];
+  onAdd: () => void;
+  onUpdate: (id: string, patch: Partial<ChartRegion>) => void;
+  onRemove: (id: string) => void;
+};
+
+function RegionsEditor({ axisX, axisY, regions, onAdd, onUpdate, onRemove }: RegionsEditorProps) {
+  return (
+    <div className="rounded-xl border border-ink-200 bg-ink-50 p-3 dark:border-ink-800 dark:bg-ink-800/40">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-sm font-medium">Quadrants / regions (optional)</div>
+          <div className="text-xs text-ink-500 dark:text-ink-400">
+            Colored rectangles shaded on the 2D chart and input pad.
+          </div>
+        </div>
+        <button type="button" className="btn-ghost text-xs" onClick={onAdd}>
+          <Plus size={14} /> Add region
+        </button>
+      </div>
+
+      {regions.length > 0 && (
+        <ul className="mt-3 space-y-2">
+          {regions.map((r) => (
+            <li
+              key={r.id}
+              className="rounded-lg border border-ink-200 bg-white p-2 dark:border-ink-800 dark:bg-ink-900"
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  className="h-4 w-4 shrink-0 rounded"
+                  style={{ backgroundColor: r.color }}
+                />
+                <input
+                  className="input flex-1 py-1 text-sm"
+                  placeholder="Label (optional)"
+                  value={r.label ?? ''}
+                  onChange={(e) => onUpdate(r.id, { label: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="btn-ghost p-1.5"
+                  aria-label="Remove region"
+                  onClick={() => onRemove(r.id)}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <label className="text-[10px] uppercase tracking-wide text-ink-500 dark:text-ink-400">
+                  {axisX.name} from
+                  <input
+                    className="input mt-0.5 py-1 text-sm tabular-nums"
+                    type="number"
+                    inputMode="decimal"
+                    value={String(r.x1)}
+                    onChange={(e) => onUpdate(r.id, { x1: Number(e.target.value) })}
+                  />
+                </label>
+                <label className="text-[10px] uppercase tracking-wide text-ink-500 dark:text-ink-400">
+                  {axisX.name} to
+                  <input
+                    className="input mt-0.5 py-1 text-sm tabular-nums"
+                    type="number"
+                    inputMode="decimal"
+                    value={String(r.x2)}
+                    onChange={(e) => onUpdate(r.id, { x2: Number(e.target.value) })}
+                  />
+                </label>
+                <label className="text-[10px] uppercase tracking-wide text-ink-500 dark:text-ink-400">
+                  {axisY.name} from
+                  <input
+                    className="input mt-0.5 py-1 text-sm tabular-nums"
+                    type="number"
+                    inputMode="decimal"
+                    value={String(r.y1)}
+                    onChange={(e) => onUpdate(r.id, { y1: Number(e.target.value) })}
+                  />
+                </label>
+                <label className="text-[10px] uppercase tracking-wide text-ink-500 dark:text-ink-400">
+                  {axisY.name} to
+                  <input
+                    className="input mt-0.5 py-1 text-sm tabular-nums"
+                    type="number"
+                    inputMode="decimal"
+                    value={String(r.y2)}
+                    onChange={(e) => onUpdate(r.id, { y2: Number(e.target.value) })}
+                  />
+                </label>
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {REGION_PALETTE.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    aria-label={`Region color ${c}`}
+                    className={[
+                      'h-5 w-5 rounded-full ring-1 ring-ink-300 dark:ring-ink-700',
+                      r.color === c ? 'ring-2 ring-ink-900 dark:ring-ink-50' : '',
+                    ].join(' ')}
+                    style={{ backgroundColor: c }}
+                    onClick={() => onUpdate(r.id, { color: c })}
+                  />
+                ))}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

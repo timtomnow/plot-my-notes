@@ -9,15 +9,18 @@ import {
   YAxis,
   ZAxis,
 } from 'recharts';
-import type { Axis, JournalEntry } from '@/types';
+import type { Axis, ChartRegion, JournalEntry } from '@/types';
 import { formatDayShort } from '@/lib/date';
 import { resolveBands, type ResolvedBand } from '@/lib/bands';
+import { resolveRegions } from '@/lib/regions';
 
 type Props = {
   axisX: Axis;
   axisY: Axis;
   color: string;
   entries: JournalEntry[];
+  /** Colored quadrant overlays. When present, they replace band shading. */
+  regions?: ChartRegion[];
   connectByDate?: boolean;
   onPointClick?: (e: JournalEntry) => void;
 };
@@ -30,7 +33,7 @@ type Point = {
   entry: JournalEntry;
 };
 
-export function ScatterChart2D({ axisX, axisY, color, entries, connectByDate, onPointClick }: Props) {
+export function ScatterChart2D({ axisX, axisY, color, entries, regions, connectByDate, onPointClick }: Props) {
   const filtered = entries.filter((e) => e.y !== null && e.y !== undefined);
   if (filtered.length === 0) {
     return <div className="rounded-xl bg-ink-50 p-6 text-center text-sm text-ink-400 dark:bg-ink-800/50 dark:text-ink-500">No data in range.</div>;
@@ -53,15 +56,41 @@ export function ScatterChart2D({ axisX, axisY, color, entries, connectByDate, on
       entry: e,
     }));
 
+  // Explicit quadrant regions take precedence over band-derived shading.
+  const resolvedRegions = resolveRegions(regions, axisX, axisY);
   const bandsX = resolveBands(axisX);
   const bandsY = resolveBands(axisY);
-  const cells = buildBandCells(axisX, axisY, bandsX, bandsY);
+  const cells =
+    resolvedRegions.length > 0 ? [] : buildBandCells(axisX, axisY, bandsX, bandsY);
 
   return (
     <div className="h-80 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <ScatterChart margin={{ top: 10, right: 16, bottom: 16, left: -8 }}>
           <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 3" />
+          {resolvedRegions.map((r) => (
+            <ReferenceArea
+              key={r.id}
+              x1={r.x1}
+              x2={r.x2}
+              y1={r.y1}
+              y2={r.y2}
+              fill={r.color}
+              fillOpacity={r.opacity}
+              stroke="none"
+              ifOverflow="extendDomain"
+              label={
+                r.label
+                  ? {
+                      value: r.label,
+                      position: 'insideTopLeft',
+                      fontSize: 10,
+                      fill: 'var(--chart-text)',
+                    }
+                  : undefined
+              }
+            />
+          ))}
           {cells.map((c) => (
             <ReferenceArea
               key={c.key}

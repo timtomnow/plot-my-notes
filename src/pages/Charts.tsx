@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { LineChart1D } from '@/components/charts/LineChart1D';
 import { ScatterChart2D } from '@/components/charts/ScatterChart2D';
 import { Modal } from '@/components/ui/Modal';
+import { DescriptionInfo } from '@/components/ui/DescriptionInfo';
 import { useAxes, useEntries, useTrackingTypes } from '@/db/repo';
 import type { JournalEntry } from '@/types';
 import { formatDay } from '@/lib/date';
@@ -151,9 +152,19 @@ export function Charts() {
               axisY={axisY}
               color={trackingType.color}
               entries={filteredEntries}
+              regions={trackingType.regions}
               connectByDate={connectByDate}
               onPointClick={(e) => setOpenEntry(e)}
             />
+            {(trackingType.shortDescription || trackingType.description) && (
+              <div className="mt-3 border-t border-ink-100 pt-3 text-sm dark:border-ink-800">
+                <DescriptionInfo
+                  title={trackingType.name}
+                  shortDescription={trackingType.shortDescription}
+                  description={trackingType.description}
+                />
+              </div>
+            )}
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4">
@@ -203,6 +214,15 @@ export function Charts() {
             entries={filteredEntries}
             onPointClick={(e) => setOpenEntry(e)}
           />
+          {(trackingType.shortDescription || trackingType.description) && (
+            <div className="mt-3 border-t border-ink-100 pt-3 text-sm dark:border-ink-800">
+              <DescriptionInfo
+                title={trackingType.name}
+                shortDescription={trackingType.shortDescription}
+                description={trackingType.description}
+              />
+            </div>
+          )}
         </div>
       )}
 

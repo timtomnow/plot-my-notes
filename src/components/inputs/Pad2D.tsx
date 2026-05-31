@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Axis } from '@/types';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { Axis, ChartRegion } from '@/types';
 import {
   formatScore,
   fractionToValue,
   snapToStep,
   valueToFraction,
 } from '@/lib/score';
+import { regionBoxes, resolveRegions } from '@/lib/regions';
 
 type Props = {
   axisX: Axis;
@@ -13,6 +14,8 @@ type Props = {
   x: number;
   y: number;
   color?: string;
+  /** Colored quadrant overlays drawn behind the grid. */
+  regions?: ChartRegion[];
   onChange: (x: number, y: number) => void;
 };
 
@@ -23,13 +26,18 @@ const PAD_PADDING = 32;
  * 2D drag-pad input. Coordinate convention: x increases left→right,
  * y increases bottom→top (so "happier" feels like "up").
  */
-export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', onChange }: Props) {
+export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', regions, onChange }: Props) {
   const surfaceRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
   const [touched, setTouched] = useState(false);
 
   const fx = valueToFraction(x, axisX);
   const fy = valueToFraction(y, axisY);
+
+  const boxes = useMemo(
+    () => regionBoxes(resolveRegions(regions, axisX, axisY), axisX, axisY),
+    [regions, axisX, axisY],
+  );
 
   const updateFromPointer = useCallback(
     (clientX: number, clientY: number) => {
@@ -108,6 +116,30 @@ export function Pad2D({ axisX, axisY, x, y, color = '#0a0a0a', onChange }: Props
             updateFromPointer(e.clientX, e.clientY);
           }}
         >
+          {/* Region overlays (colored quadrants) */}
+          {boxes.map((b) => (
+            <div
+              key={b.id}
+              className="pointer-events-none absolute overflow-hidden"
+              style={{
+                left: `${b.left}%`,
+                top: `${b.top}%`,
+                width: `${b.width}%`,
+                height: `${b.height}%`,
+              }}
+            >
+              <div
+                className="absolute inset-0"
+                style={{ backgroundColor: b.color, opacity: b.opacity }}
+              />
+              {b.label && (
+                <span className="absolute left-1 top-0.5 text-[9px] font-medium leading-tight text-ink-600 dark:text-ink-300">
+                  {b.label}
+                </span>
+              )}
+            </div>
+          ))}
+
           {/* Grid */}
           <svg className="absolute inset-0 h-full w-full text-ink-200 dark:text-ink-800" preserveAspectRatio="none" viewBox="0 0 100 100">
             {Array.from({ length: xSteps + 1 }, (_, i) => {
