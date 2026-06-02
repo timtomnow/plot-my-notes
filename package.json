@@ -14,13 +14,16 @@
     "check": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.19",
     "dexie": "^4.0.8",
     "dexie-react-hooks": "^1.1.7",
     "lucide-react": "^0.456.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^6.27.0",
-    "recharts": "^2.13.3"
+    "recharts": "^2.13.3",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

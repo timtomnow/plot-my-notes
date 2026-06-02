@@ -23,6 +23,7 @@ phase is sized so it can be implemented and verified independently.
 | PWA            | **vite-plugin-pwa** (Workbox)       | Generates manifest + service worker; installable on iOS/Android.    |
 | Icons          | **lucide-react**                    | Lightweight, consistent line icons.                                 |
 | State          | React Context + Dexie hooks         | No Redux — Dexie's `useLiveQuery` is reactive.                      |
+| In-app docs     | **react-markdown + remark-gfm**, **@tailwindcss/typography** | Renders Markdown help guides (`src/content/help/*.md`) at `/help`. Guides are authored by the `ttn-docs` Claude Skill; keeping them as plain `.md` makes them trivial to edit/diff/AI-generate. Typography plugin gives the docs the Read-the-Docs look. |
 
 ### 2D Input Decision (the hardest UX)
 Three patterns were considered:

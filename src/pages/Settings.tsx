@@ -12,6 +12,7 @@ import {
   Moon,
   Monitor,
   Bell,
+  BookOpen,
 } from 'lucide-react';
 import { useTheme, type ThemePref } from '@/app/theme';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -60,6 +61,13 @@ export function Settings() {
           title="Reminders"
           subtitle="calendar file"
           description="Generate an .ics file your phone's calendar can import to nudge you on a schedule."
+        />
+        <SettingLink
+          to="/help"
+          icon={<BookOpen size={20} />}
+          title="Help & Guides"
+          subtitle="how-to"
+          description="Step-by-step walkthroughs for getting things done in the app."
         />
       </ul>
 

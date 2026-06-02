@@ -8,6 +8,7 @@ import { Axes } from '@/pages/Axes';
 import { TrackingTypes } from '@/pages/TrackingTypes';
 import { Settings } from '@/pages/Settings';
 import { Reminders } from '@/pages/Reminders';
+import { Help } from '@/pages/Help';
 import { ToastProvider } from '@/components/ui/Toast';
 import { ThemeProvider } from './theme';
 
@@ -26,6 +27,8 @@ export function App() {
             <Route path="/settings/axes" element={<Axes />} />
             <Route path="/settings/tracking-types" element={<TrackingTypes />} />
             <Route path="/settings/reminders" element={<Reminders />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/help/:slug" element={<Help />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

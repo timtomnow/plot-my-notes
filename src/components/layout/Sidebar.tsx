@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Plus, LineChart, ListTodo, Settings as SettingsIcon } from 'lucide-react';
+import { Home, Plus, LineChart, ListTodo, Settings as SettingsIcon, BookOpen } from 'lucide-react';
 import { Logo } from './Logo';
 
 const items = [
@@ -8,6 +8,7 @@ const items = [
   { to: '/entries', label: 'Entries', icon: ListTodo },
   { to: '/charts', label: 'Charts', icon: LineChart },
   { to: '/settings', label: 'Settings', icon: SettingsIcon },
+  { to: '/help', label: 'Help', icon: BookOpen },
 ];
 
 export function Sidebar() {
